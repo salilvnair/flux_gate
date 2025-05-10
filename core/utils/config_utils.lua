@@ -2,6 +2,8 @@
 local configUtils = {}
 local json = require "cjson"
 local props = require("flux_gate/core/settings/props")
+local fluxGateService = require("flux_gate/core/service/fluxgate_service")
+local logger = require("flux_gate/core/utils/logger")
 
 
 function configUtils.serialize_table1(tbl, indent)
@@ -86,5 +88,36 @@ function configUtils.json_2_lua(json_string)
     local json_table = json.decode(json_string)
     return json_table
 end
+
+
+function configUtils.initLatestConfigFromDb()
+    local function preload_cache()
+        local fluxgate_shared_dict = ngx.shared.fluxgate_shared_dict
+
+        local configSavedByOtherWorker = fluxgate_shared_dict:get("config_saved")
+
+        if not configSavedByOtherWorker then
+            logger.debug("initializing config.")
+            local fluxgateConfig = fluxGateService.loadConfig();
+
+            local config_data, err = json.decode(fluxgateConfig.config)
+            if not config_data then
+                error("Failed to decode configuration JSON: " .. (err or "unknown"))
+            end
+            local success, err = fluxgate_shared_dict:set("config_saved", true)
+            if not success then
+                error("Failed to store configuration in shared dictionary: " .. (err or "unknown"))
+            end
+            configUtils.write_lua_file(props.config_path, config_data)
+        else
+            logger.debug("Other worker already did initialized config.")
+        end
+    end
+    local ok, err = ngx.timer.at(0, preload_cache)
+    if not ok then
+        logger.debug("Failed:"..err)
+    end
+end
+
 
 return configUtils

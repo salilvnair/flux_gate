@@ -1,16 +1,10 @@
 local json = require "cjson"
 local configUtils = require("flux_gate/core/utils/config_utils")
 local props = require("flux_gate/core/settings/props")
-local dbUtils = require "flux_gate/core/utils/db_utils"
-
-local function fetchConfig()
-    local db = dbUtils.connect()
-    return dbUtils.fetchConfig(db)
-end
-
+local fluxGateService = require("flux_gate/core/service/fluxgate_service")
 
 local function save_config()
-    local json_string = fetchConfig()[1].config
+    local json_string = fluxGateService.loadConfig().config
 
     local data = json.decode(json_string)
     if not data then

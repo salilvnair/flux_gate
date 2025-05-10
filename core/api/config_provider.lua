@@ -1,18 +1,15 @@
 local json = require("cjson")
-local dbUtils = require "flux_gate/core/utils/db_utils"
+local fluxGateService = require("flux_gate/core/service/fluxgate_service")
 
-local function fetchConfig()
-    local db = dbUtils.connect()
-    return dbUtils.fetchConfig(db)
+local function read_config()
+    local flexGateConfig = fluxGateService.loadConfig()
+    if not flexGateConfig then
+        ngx.say(json.encode({}))
+    end
+    ngx.say(flexGateConfig.config)
 end
 
-
-local method = ngx.req.get_method()
-if method == "GET" then
-    local json_string = fetchConfig()[1].config
-    ngx.say(json_string)
-elseif method == "POST" then
-    ngx.header.content_type = "application/json; charset=utf-8"
+local function save_config()
     ngx.req.read_body()
     local body = ngx.req.get_body_data()
     if not body then
@@ -27,9 +24,20 @@ elseif method == "POST" then
         ngx.say(json.encode({ error = "Invalid JSON structure" }))
         return
     end
-    dbUtils.saveConfig(data)
+
+    fluxGateService.saveConfig(data)
+
     ngx.status = ngx.HTTP_OK
     ngx.say(json.encode({ message = "Config saved successfully" }))
+end
+
+local method = ngx.req.get_method()
+if method == "GET" then
+    ngx.header.content_type = "application/json; charset=utf-8"
+    read_config()
+elseif method == "POST" then
+    ngx.header.content_type = "application/json; charset=utf-8"
+    save_config()
 else
     ngx.status = ngx.HTTP_NOT_ALLOWED
     ngx.header.content_type = "application/json; charset=utf-8"

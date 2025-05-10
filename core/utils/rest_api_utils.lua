@@ -1,7 +1,7 @@
-local restClientUtils = {}
+local restApiUtils = {}
 local http = require("resty.http")
 
-function restClientUtils.invoke(backend_url)
+function restApiUtils.invoke(backend_url)
     local httpc = http.new()
     local res, err = httpc:request_uri(backend_url, {
         method = "GET"
@@ -21,4 +21,4 @@ function restClientUtils.invoke(backend_url)
     ngx.say(res.body)
 end
 
-return restClientUtils;
+return restApiUtils;
