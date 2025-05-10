@@ -1,0 +1,26 @@
+# Lua bytecode
+*.luac
+
+# Temporary files
+*.bak
+*.tmp
+*.swp
+*.swo
+
+# IDE/editor specific files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs and debugging
+*.log
+*.out
+*.err
+
+# Dependency files (if applicable)
+vendor/
