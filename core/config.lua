@@ -1,72 +1,72 @@
 local config = {
-  apiConfig = {
-    sc1 = {
-      resolver_module = "resolvers/body_resolver",
-      data = {
+  upstreamConfig = {
+    {
+      id = "",
+      servers = {
         {
-          rules = {
-            {
-              operator = "AND",
-              key = "JohnDoe",
-              id = "1",
-            },
-          },
-          gate = true,
           id = "1",
+          address = "localhost:31337",
         },
       },
-      active = true,
-      new_url = "http://127.0.0.1:54333/CreateUserService",
-      old_url_upstream = false,
-      old_url = "http://127.0.0.1:54333",
-      new_url_upstream = false,
+      upstream = "ping_backend_upstream",
     },
+  },
+  apiConfig = {
     rc1 = {
+      active = true,
+      new_url = "ping_backend_upstream",
+      old_url = "http://127.0.0.1:31337",
+      old_url_upstream = false,
       resolver_module = "resolvers/url_resolver",
+      new_url_upstream = true,
       data = {
         {
+          id = "1",
           rules = {
             {
+              id = "1",
               operator = "AND",
               key = "Ching",
-              id = "1",
             },
           },
           gate = false,
-          id = "1",
         },
       },
+    },
+    sc1 = {
       active = true,
-      new_url = "ping_backend_upstream",
+      new_url = "http://127.0.0.1:54333/CreateUserService",
+      old_url = "http://127.0.0.1:54333",
       old_url_upstream = false,
-      old_url = "http://127.0.0.1:31337",
-      new_url_upstream = true,
+      resolver_module = "resolvers/body_resolver",
+      new_url_upstream = false,
+      data = {
+        {
+          id = "1",
+          rules = {
+            {
+              id = "1",
+              operator = "AND",
+              key = "JohnDoe",
+            },
+          },
+          gate = true,
+        },
+      },
     },
   },
   urlConfig = {
     {
-      subcontext = "/ping",
       id = "rc1",
+      subcontext = "/ping",
     },
     {
-      subcontext = "/CreateUserService",
       id = "sc1",
+      subcontext = "/CreateUserService",
     },
   },
   defaultConfig = {
     old_url = "tester",
-  },
-  upstreamConfig = {
-    {
-      servers = {
-        {
-          address = "localhost:31337",
-          id = "1",
-        },
-      },
-      upstream = "ping_backend_upstream",
-      id = "",
-    },
   },
 }
 
