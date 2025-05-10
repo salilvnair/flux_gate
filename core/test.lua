@@ -6,7 +6,7 @@ local entity = {
     id = 1,
     config = "config json here",
     modified = os.date("%Y-%m-%d %H:%M:%S"),
-    userId = "sn2527",
+    userId = "salilvnair",
     notes = "Saving from console",
 }
     
