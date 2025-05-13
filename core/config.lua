@@ -1,72 +1,78 @@
 local config = {
+  apiConfig = {
+    sc1 = {
+      data = {
+        {
+          id = "1",
+          gate = true,
+          rules = {
+            {
+              value = "test",
+              id = "1",
+              key = "test",
+              operator = "AND",
+            },
+          },
+        },
+      },
+      active = true,
+      new_url = "http://localhost:8888/new_ping",
+      old_url_upstream = false,
+      old_url = "http://localhost:8888/ping",
+      new_url_upstream = false,
+      resolver_module = "resolvers/body_resolver",
+    },
+    rc1 = {
+      data = {
+        {
+          id = "1",
+          gate = true,
+          rules = {
+            {
+              value = "test",
+              id = "1",
+              key = "test",
+              operator = "AND",
+            },
+          },
+        },
+      },
+      active = true,
+      new_url = "rest_ping",
+      old_url_upstream = false,
+      old_url = "http://localhost:8888/ping",
+      new_url_upstream = true,
+      resolver_module = "resolvers/header_resolver",
+    },
+  },
   upstreamConfig = {
     {
       id = "",
       servers = {
         {
+          address = "1.1.1.1",
           id = "1",
-          address = "localhost:31337",
         },
-      },
-      upstream = "ping_backend_upstream",
-    },
-  },
-  apiConfig = {
-    rc1 = {
-      active = true,
-      new_url = "ping_backend_upstream",
-      old_url = "http://127.0.0.1:31337",
-      old_url_upstream = false,
-      resolver_module = "resolvers/url_resolver",
-      new_url_upstream = true,
-      data = {
         {
-          id = "1",
-          rules = {
-            {
-              id = "1",
-              operator = "AND",
-              key = "Ching",
-            },
-          },
-          gate = false,
+          address = "2.2.2.2",
+          id = "2",
         },
       },
-    },
-    sc1 = {
-      active = true,
-      new_url = "http://127.0.0.1:54333/CreateUserService",
-      old_url = "http://127.0.0.1:54333",
-      old_url_upstream = false,
-      resolver_module = "resolvers/body_resolver",
-      new_url_upstream = false,
-      data = {
-        {
-          id = "1",
-          rules = {
-            {
-              id = "1",
-              operator = "AND",
-              key = "JohnDoe",
-            },
-          },
-          gate = true,
-        },
-      },
-    },
-  },
-  urlConfig = {
-    {
-      id = "rc1",
-      subcontext = "/ping",
-    },
-    {
-      id = "sc1",
-      subcontext = "/CreateUserService",
+      upstream = "rest_ping",
     },
   },
   defaultConfig = {
-    old_url = "tester",
+    old_url = "old itdfdf",
+  },
+  urlConfig = {
+    {
+      subcontext = "/ping",
+      id = "sc1",
+    },
+    {
+      subcontext = "/restping",
+      id = "rc1",
+    },
   },
 }
 

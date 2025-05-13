@@ -1,20 +1,20 @@
 
 local BaseRepository = require("flux_gate/core/repo/base_repo")
-local FluxGateConfig = require("flux_gate/core/entity/config_entity")
+local User = require("flux_gate/auth/entity/user")
 local logger = require("flux_gate/core/utils/logger")
 local json = require("cjson")
 
-local FluxGateConfigRepository = {}
-FluxGateConfigRepository.__index = FluxGateConfigRepository
-setmetatable(FluxGateConfigRepository, BaseRepository)
+local UserRepository = {}
+UserRepository.__index = UserRepository
+setmetatable(UserRepository, BaseRepository)
 
-function FluxGateConfigRepository:new(database)
+function UserRepository:new(database)
     local obj = BaseRepository:new(database)
     setmetatable(obj, self)
     return obj
 end
 
-function FluxGateConfigRepository:save(newConfig)
+function UserRepository:save(newConfig)
 
     local modified_timestamp = os.date("%Y-%m-%d %H:%M:%S")
     local entity = {
@@ -27,7 +27,7 @@ function FluxGateConfigRepository:save(newConfig)
 
     logger.debug("entity"..json.encode(entity))
 
-    local metadata = FluxGateConfig.__metadata
+    local metadata = User.__metadata
     
     if not metadata or not metadata.table or not metadata.columns then
         error("Entity metadata is not properly defined!")
@@ -103,19 +103,20 @@ function FluxGateConfigRepository:save(newConfig)
     end
 end
 
-function FluxGateConfigRepository:findById(id)
-    local metadata = FluxGateConfig.__metadata
+function UserRepository:findById(id)
+    local metadata = User.__metadata
     local query = string.format("SELECT * FROM %s WHERE %s = ?", metadata.table, metadata.id)
     local results = self.database:execute(query, { id })
     return results[1]
 end
 
 
-function FluxGateConfigRepository:deleteById(id)
-    local metadata = FluxGateConfig.__metadata
+function UserRepository:deleteById(id)
+    local metadata = User.__metadata
     local query = string.format("DELETE FROM %s WHERE %s = ?", metadata.table, metadata.id)
     self.database:execute(query, { id })
     logger.debug("Entity deleted successfully!")
 end
 
-return FluxGateConfigRepository
+
+return UserRepository

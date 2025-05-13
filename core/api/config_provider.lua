@@ -5,8 +5,9 @@ local function read_config()
     local flexGateConfig = fluxGateService.loadConfig()
     if not flexGateConfig then
         ngx.say(json.encode({}))
+    else
+        ngx.say(flexGateConfig.config)
     end
-    ngx.say(flexGateConfig.config)
 end
 
 local function save_config()

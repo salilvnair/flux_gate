@@ -100,6 +100,10 @@ function configUtils.initLatestConfigFromDb()
             logger.debug("initializing config.")
             local fluxgateConfig = fluxGateService.loadConfig();
 
+            if not fluxgateConfig then
+                logger.debug("Failed or No Config to load from database.")
+            end
+
             local config_data, err = json.decode(fluxgateConfig.config)
             if not config_data then
                 error("Failed to decode configuration JSON: " .. (err or "unknown"))

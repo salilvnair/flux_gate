@@ -33,11 +33,13 @@ function consoleUtils.initEnvConfigAndLoadHtml(base_url)
             ngx.say("Could not read index.html")
             return
         end
-        file:write(content)
-        file:close() 
-        -- Cache the replaced content for subsequent requests
-        fluxgate_shared_dict:set("index_config_initialized", true)
-        fluxgate_shared_dict:set("cached_index", content)
+        if content then
+            file:write(content)
+            file:close() 
+            -- Cache the replaced content for subsequent requests
+            fluxgate_shared_dict:set("index_config_initialized", true)
+            fluxgate_shared_dict:set("cached_index", content)
+        end
     end
 end
 
