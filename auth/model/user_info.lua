@@ -9,4 +9,12 @@ function userInfo.generate(username, firstName, lastName, active, roles)
         roles = roles
     }
 end
+
+function userInfo.generateRole(id, name)
+    return {
+        id = id,
+        name = name
+    }
+end
+
 return userInfo

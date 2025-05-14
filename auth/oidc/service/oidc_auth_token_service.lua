@@ -7,9 +7,9 @@ local logger = require("flux_gate/core/utils/logger")
 
 
 
-function oidcAuthTokenService.execute(code)
+function oidcAuthTokenService.execute(state, code, redirectUri)
     local clientId, codeVerifier, clientSecret = props.clientId, props.codeVerifier, props.clientSecret
-    local grantType, redirectUri = props.grantType, props.redirectUri
+    local grantType = props.grantType
     local formBody = {
         client_id = clientId,
         code = code,
@@ -20,7 +20,7 @@ function oidcAuthTokenService.execute(code)
     }
     local httpc = http.new()
 
-    local res, err = httpc:request_uri("http://127.0.0.1:31333/authenticate", {
+    local res, err = httpc:request_uri(props.tokenUri, {
         method = "POST",
         body = ngx.encode_args(formBody),
         headers = {

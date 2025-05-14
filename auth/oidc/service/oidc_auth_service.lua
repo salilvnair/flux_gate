@@ -21,7 +21,8 @@ end
 
 
 function oidcAuthService.authorize(state, code)
-    local oidcTokenResponse = oidcAuthTokenService.execute(code)
+    local redirectUri = oidcAuthService.generateAuthorizationUri()
+    local oidcTokenResponse = oidcAuthTokenService.execute(state, code, redirectUri)
     if not oidcTokenResponse then
         logger.debug("Failed to get token response")
         return nil
