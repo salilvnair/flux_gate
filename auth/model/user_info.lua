@@ -1,11 +1,11 @@
 local userInfo = {}
 
-function userInfo.generate(username, firstName, lastName, enabled, roles)
+function userInfo.generate(username, firstName, lastName, active, roles)
     return {
         username = username,
         firstName = firstName,
         lastName = lastName,
-        enabled = enabled,
+        active = active,
         roles = roles
     }
 end

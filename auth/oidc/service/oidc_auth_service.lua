@@ -32,9 +32,9 @@ function oidcAuthService.authorize(state, code)
         local userInfo = userTokenService.findUserInfoFromToken(idToken)
         if not userInfo then
             logger.debug("Failed to get user info from token")
-            return nil
+            return userTokenState.generate(false, "user not found", nil, nil, nil)
         end
-        if userInfo.enabled then
+        if userInfo.active then
             local userTokenStateData = {
                 validToken = true,
                 error = oidcTokenResponse.error,
@@ -44,8 +44,12 @@ function oidcAuthService.authorize(state, code)
             }
             return userTokenState.generate(userTokenStateData.validToken, userInfo.error, userInfo.idToken, userInfo.expiresIn, userInfo)
         else
-            
+            logger.debug("User is not active")
+            return userTokenState.generate(false, "user not active", nil, nil, nil)
         end
+    else
+        logger.debug("Token generation failed: " .. oidcTokenResponse.error)
+        return userTokenState.generate(false, oidcTokenResponse.error, nil, nil, nil)
     end
 end
 

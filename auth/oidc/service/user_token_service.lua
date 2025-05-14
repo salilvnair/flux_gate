@@ -36,8 +36,11 @@ function userTokenService.findUserInfo(username)
         },
     }
     logger.debug("user: " .. json.encode(user))
-
-    return userInfo.generate(user.user_id, user.first_name, user.last_name, true, roles)
+    local userActive = false
+    if user.active == 'Y' then
+        userActive = true
+    end
+    return userInfo.generate(user.user_id, user.first_name, user.last_name, userActive, roles)
 end
 
 return userTokenService

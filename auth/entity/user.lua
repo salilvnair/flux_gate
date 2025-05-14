@@ -8,6 +8,7 @@ local User = {
             modified = { column = "last_name" },
             email = { column = "email" },
             roleId = { column = "role_id" },
+            active = { column = "active" },
         }
     }
 
