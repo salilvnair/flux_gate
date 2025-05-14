@@ -18,7 +18,6 @@ function UserRepository:save(newConfig)
 
     local modified_timestamp = os.date("%Y-%m-%d %H:%M:%S")
     local entity = {
-        id = 1,
         config = json.encode(newConfig),
         modified = modified_timestamp,
         userId = "salilvnair",

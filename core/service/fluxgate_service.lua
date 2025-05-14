@@ -3,10 +3,10 @@ local props = require("flux_gate/core/settings/props")
 local Database = require("flux_gate/core/db/db")
 local FluxGateConfigRepository = require("flux_gate/core/repo/config_repo")
 
-function fluxGateService.saveConfig(config)
+function fluxGateService.saveConfig(data)
     local db = Database:new(props.db_config)
     local configRepo = FluxGateConfigRepository:new(db)
-    configRepo:save(config)
+    configRepo:save(data)
     db:close()
     -- dbUtils.saveConfig(config)
 end

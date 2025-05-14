@@ -14,14 +14,14 @@ function FluxGateConfigRepository:new(database)
     return obj
 end
 
-function FluxGateConfigRepository:save(newConfig)
+function FluxGateConfigRepository:save(data)
 
     local modified_timestamp = os.date("%Y-%m-%d %H:%M:%S")
     local entity = {
         id = 1,
-        config = json.encode(newConfig),
+        config = json.encode(data.config),
         modified = modified_timestamp,
-        userId = "salilvnair",
+        userId = data.userName,
         notes = "Saving from console",
     }
 

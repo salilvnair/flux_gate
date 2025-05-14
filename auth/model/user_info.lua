@@ -7,7 +7,6 @@ function userInfo.generate(username, firstName, lastName, enabled, roles)
         lastName = lastName,
         enabled = enabled,
         roles = roles
-        
     }
 end
 return userInfo
