@@ -1,4 +1,14 @@
 ```sql
+
+CREATE TABLE fluxgate_config (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    config json NOT NULL,
+    modified timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    user_id varchar(50) NOT NULL,
+  	notes varchar(255) DEFAULT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
 CREATE TABLE users (
     user_id VARCHAR(30) PRIMARY KEY,
     first_name VARCHAR(100),
