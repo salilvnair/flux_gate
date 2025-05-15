@@ -2,6 +2,7 @@ local nginxUtils = {}
 local logger = require("flux_gate/core/utils/logger")
 local json = require "cjson"
 local fluxGateService = require("flux_gate/core/service/fluxgate_service")
+local dnsUtils = require("flux_gate/core/utils/dns_utils")
 
 function nginxUtils.updateUpstreams()
     local configJson = fluxGateService.loadConfig().config
@@ -38,13 +39,34 @@ function nginxUtils.updateUpstreams()
     logger.debug("allUpstreamsConfig" .. allUpstreamsConfig)
 
     -- Write to a file
-    local file, err = io.open("/usr/local/openresty/nginx/conf.d/fluxgate_upstreams.conf", "w")
+    local file, err = io.open("/usr/local/openresty/lualib/flux_gate/nginx/conf/fluxgate_upstreams.conf", "w")
     if not file then
         logger.debug("Failed to open file: "..err)
         return
     end
 
     file:write(allUpstreamsConfig)
+    file:close()
+end
+
+function nginxUtils.updateNameResolver()
+    local nameservers = dnsUtils.allNameServers()
+    if not nameservers then
+        logger.debug("No nameservers found")
+        return
+    end
+    local resolverConfig = "resolver " .. table.concat(nameservers, " ") .. " valid=300s;\n"
+
+    logger.debug("resolverConfig" .. resolverConfig)
+
+    -- Write to a file
+    local file, err = io.open("/usr/local/openresty/lualib/flux_gate/nginx/conf/fluxgate_resolver.conf", "w")
+    if not file then
+        logger.debug("Failed to open file: "..err)
+        return
+    end
+
+    file:write(resolverConfig)
     file:close()
 end
 

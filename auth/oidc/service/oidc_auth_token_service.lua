@@ -1,6 +1,6 @@
 local oidcAuthTokenService = {}
 local props = require("flux_gate/auth/settings/props")
-local http = require("resty.http")
+local httpUtils = require("flux_gate/core/utils/http_utils")
 local oidcTokenResponse = require("flux_gate/auth/oidc/model/oidc_token_response")
 local cjson = require("cjson")
 local logger = require("flux_gate/core/utils/logger")
@@ -18,16 +18,12 @@ function oidcAuthTokenService.execute(state, code, redirectUri)
         grant_type = grantType,
         redirect_uri = redirectUri
     }
-    local httpc = http.new()
+    local headers = {
+        ["Content-Type"] = "application/x-www-form-urlencoded"
+    }
 
-    local res, err = httpc:request_uri(props.tokenUri, {
-        method = "POST",
-        body = ngx.encode_args(formBody),
-        headers = {
-            ["Content-Type"] = "application/x-www-form-urlencoded"
-        }
-    })
-
+    local res, err = httpUtils.exchange(props.tokenUri, httpUtils.HTTP_METHOD.POST, headers, ngx.encode_args(formBody), false)
+    
     if not res then
         ngx.log(ngx.ERR, "failed to request: ", err)
         return nil
