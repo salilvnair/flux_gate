@@ -36,3 +36,13 @@ CREATE INDEX idx_user_roles_user_id ON user_roles(user_id);
 CREATE INDEX idx_user_roles_role_id ON user_roles(role_id);
 
 ```
+
+```bash
+
+export LUAJIT_DIR='/usr/local/openresty/luajit'
+luarocks --lua-dir=$LUAJIT_DIR --lua-version=5.1 install luasocket
+luarocks --lua-dir=$LUAJIT_DIR --lua-version=5.1 install lua-resty-openssl 
+luarocks --lua-dir=$LUAJIT_DIR --lua-version=5.1 install lua-resty-http
+luarocks --lua-dir=$LUAJIT_DIR --lua-version=5.1 install lua-resty-jwt
+
+```

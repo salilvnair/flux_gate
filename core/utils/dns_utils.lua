@@ -56,6 +56,11 @@ function dnsUtils.generate()
 end
 
 function dnsUtils.resolveHost(host)
+
+    if host == "localhost" then
+        return "127.0.0.1"
+    end
+
     local dns = dnsUtils.generate()
     if not dns then
         return nil, "Error creating resolver"
