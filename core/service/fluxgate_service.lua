@@ -2,6 +2,7 @@ local fluxGateService = {}
 local props = require("flux_gate/core/settings/props")
 local Database = require("flux_gate/core/db/db")
 local FluxGateConfigRepository = require("flux_gate/core/repo/config_repo")
+local FluxGateConfigLogRepository = require("flux_gate/core/repo/config_log_repo")
 local logger = require("flux_gate/core/utils/logger")
 
 function fluxGateService.saveConfig(data)
@@ -12,8 +13,10 @@ function fluxGateService.saveConfig(data)
     end
 
     local configRepo = FluxGateConfigRepository:new(db)
+    local configLogRepo = FluxGateConfigLogRepository:new(db)
     local ok, execErr = pcall(function()
         configRepo:save(data)
+        configLogRepo:save(data)
     end)
 
     db:close()
