@@ -2,6 +2,7 @@ local mysql = require("resty.mysql")
 local logger = require("flux_gate/core/utils/logger")
 
 local Database = {}
+local live_connections = {}
 Database.__index = Database
 
 function Database:new(db_config)
@@ -31,6 +32,7 @@ function Database:new(db_config)
 
     logger.debug("Connected to MySQL.")
     local obj = { db = db }
+    table.insert(live_connections, db)
     setmetatable(obj, self)
     return obj
 end
@@ -70,6 +72,35 @@ function Database:close()
             self.db:close()
         end
     end
+end
+
+local function safe_log_to_file(msg)
+    local file, err = io.open("/usr/local/openresty/lualib/flux_gate/logs/mysql_shutdown.log", "a")
+    if not file then
+        return -- silent fail
+    end
+    file:write(os.date("[%Y-%m-%d %H:%M:%S] ") .. msg .. "\n")
+    file:close()
+end
+
+function Database:close_all()
+    local closed = 0
+    local failed = 0
+    for _, db in ipairs(live_connections) do
+        if db then
+            local ok = pcall(function()
+                db:close()
+            end)
+            if ok then
+                closed = closed + 1
+            else
+                failed = failed + 1
+            end
+        end
+    end
+    -- Always write to log file
+    safe_log_to_file("MySQL shutdown summary: closed=" .. closed .. ", failed=" .. failed)
+    live_connections = {}
 end
 
 return Database

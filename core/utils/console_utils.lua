@@ -43,4 +43,31 @@ function consoleUtils.initEnvConfigAndLoadHtml(base_url)
     end
 end
 
+
+function consoleUtils.initIndexHtml(base_url)
+    -- Generate a random 16-byte nonce and encode it in base64
+	local nonce = ngx.encode_base64(random.bytes(16))
+	ngx.ctx.nonce = nonce -- Store the nonce in the request context
+
+	-- Load the Angular index.html
+	local html = ngx.location.capture("/index.html").body
+    -- -- replace API Base URL
+	html = html:gsub("{{API_BASE_URL}}", base_url)
+
+	-- Replace the {{nonce}} placeholder with the generated nonce
+	html = html:gsub("{{nonce}}", ngx.ctx.nonce)
+
+	-- Set the Content-Security-Policy header
+	ngx.header["Content-Security-Policy"] =
+		"default-src 'self'; " ..
+		"script-src 'self' 'nonce-" .. nonce .. "'; " ..
+		"style-src 'self' 'unsafe-inline'; " ..
+		"connect-src 'self';" ..
+		"img-src 'self' data:; font-src 'self'; object-src 'none';"
+
+	-- Serve the modified HTML
+	ngx.header["Content-Type"] = "text/html; charset=utf-8"
+	ngx.say(html)
+end
+
 return consoleUtils

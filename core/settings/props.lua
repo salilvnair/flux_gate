@@ -7,6 +7,7 @@ local props = {
         database = "test",
         user = "fluxgate",
         password = "fluxgate",
-    }
+    },
+    memory_log_interval = 600,
 }
 return props
