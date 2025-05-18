@@ -6,7 +6,7 @@ local props = {
     clientSecret = "a700122354sdsd",
     codeVerifier = "FluxGate",
     grantType = "authorization_code",
-    redirectUri = "http://localhost:9090",
+    redirectUri = "http://localhost",
     codeChallenge = "94cj1234"
 }
 return props

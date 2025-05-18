@@ -1,5 +1,6 @@
 local consoleUtils = {}
 local logger = require("flux_gate/core/utils/logger")
+local random = require("resty.random")
 
 function consoleUtils.initEnvConfigAndLoadHtml(base_url)
     local fluxgate_shared_dict = ngx.shared.fluxgate_shared_dict
@@ -58,12 +59,12 @@ function consoleUtils.initIndexHtml(base_url)
 	html = html:gsub("{{nonce}}", ngx.ctx.nonce)
 
 	-- Set the Content-Security-Policy header
-	ngx.header["Content-Security-Policy"] =
-		"default-src 'self'; " ..
-		"script-src 'self' 'nonce-" .. nonce .. "'; " ..
-		"style-src 'self' 'unsafe-inline'; " ..
-		"connect-src 'self';" ..
-		"img-src 'self' data:; font-src 'self'; object-src 'none';"
+	-- ngx.header["Content-Security-Policy"] =
+	-- 	"default-src 'self'; " ..
+	-- 	"script-src 'self' 'nonce-" .. nonce .. "'; " ..
+	-- 	"style-src 'self' 'unsafe-inline'; " ..
+	-- 	"connect-src 'self';" ..
+	-- 	"img-src 'self' data:; font-src 'self'; object-src 'none';"
 
 	-- Serve the modified HTML
 	ngx.header["Content-Type"] = "text/html; charset=utf-8"
