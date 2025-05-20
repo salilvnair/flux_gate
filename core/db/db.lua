@@ -45,7 +45,7 @@ function Database:execute(query, params)
     if params then
         for _, param in ipairs(params) do
             local safe_param = self:escape(param)
-            query = query:gsub("?", safe_param, 1)
+            query = query:gsub("?", function() return safe_param end, 1)
         end
     end
 
