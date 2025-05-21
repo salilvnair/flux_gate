@@ -42,11 +42,11 @@ end
 local function gate(ngx)
     local interceptedData = intercept(ngx)
     if not interceptedData or not interceptedData.apiConfigData then
-        local resolvedUrl = config.defaultConfig.old_url
+        local resolvedUrl = config.defaultConfig['config'].url
         if not resolvedUrl then
             return nil
         end
-        return gatedResponse.generate(false, resolvedUrl, nil)
+        return gatedResponse.generate(false, resolvedUrl, config.defaultConfig['config'])
     end
 
     local resolver_module = interceptedData.apiConfigData.resolver_module
@@ -81,7 +81,7 @@ local function resolve(ngx)
         return gatedResponse.generate(true,  gateData.gatedUrl, gateData.metadata)
     end
     local resolvedUrl = string.gsub(gatedUrl, "{{SERVER_PORT}}", port)
-    if not gateData.metadata.old_url_upstream then
+    if not (gateData.metadata.old_url_upstream or gateData.metadata.upstream) then
         resolvedUrl =  resolvedUrl .. subcontext
     end
     logger.debug("resolvedUrl: " .. resolvedUrl)
@@ -106,8 +106,10 @@ local function resolveUrl(ngx)
         return gateData.gatedUrl
     end
     local resolvedUrl = string.gsub(gatedUrl, "{{SERVER_PORT}}", port)
+    if not (gateData.metadata.old_url_upstream or gateData.metadata.upstream) then
+        resolvedUrl =  resolvedUrl .. subcontext
+    end
     logger.debug("resolvedUrl: " .. resolvedUrl)
-    resolvedUrl = resolvedUrl .. subcontext
     return resolvedUrl
 end
 

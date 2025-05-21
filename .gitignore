@@ -24,3 +24,5 @@ Thumbs.db
 
 # Dependency files (if applicable)
 vendor/
+
+core/config.lua
