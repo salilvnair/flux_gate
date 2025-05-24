@@ -1,6 +1,15 @@
 local resolver = require "resty.dns.resolver"
+local lrucache = require "resty.lrucache"
 local logger = require "flux_gate/core/utils/logger"
 local dnsUtils = {}
+
+function dnsUtils.init_dns_cache()
+    local cache, err = lrucache.new(200)
+    if not cache then
+        error("failed to create the cache: " .. (err or "unknown"))
+    end
+    package.loaded["dns_cache"] = cache
+end
 
 -- Function to parse /etc/resolv.conf and get the nameservers
 function dnsUtils.allNameServers()
@@ -56,11 +65,20 @@ function dnsUtils.generate()
 end
 
 function dnsUtils.resolveHost(host)
+    local cache = require("dns_cache")
 
     if host == "localhost" then
         return "127.0.0.1"
     end
 
+    -- Try LRU cache first
+    local cached = cache:get(host)
+    if cached then
+        logger.debug("DNS cache hit for: " .. host .. " -> " .. cached)
+        return cached
+    end
+
+    -- Else resolve
     local dns = dnsUtils.generate()
     if not dns then
         return nil, "Error creating resolver"
@@ -73,6 +91,7 @@ function dnsUtils.resolveHost(host)
         return nil, "Error resolving IP: " .. ip.errcode .. ": " .. (ip.errstr or "unknown error")
     end
     if #ip > 0 then
+        cache:set(host, ip[1].address)
         return ip[1].address
     else
         return nil, "No IP address found"

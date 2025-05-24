@@ -73,7 +73,7 @@ function FluxGateConfigRepository:save(data)
         logger.debug("Entity updated successfully.")
     else
         -- INSERT
-        local placeholders = table.concat({ string.rep("?", #columnNames) }, ", "):gsub(", $", "")
+        local placeholders = string.rep("?", #columnNames, ", "):gsub(", $", "")
         local query = string.format(
             "INSERT INTO %s (%s) VALUES (%s)",
             tableName,

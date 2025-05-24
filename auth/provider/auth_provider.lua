@@ -1,5 +1,6 @@
 local json = require "cjson"
 local oidcAuthService = require "flux_gate/auth/oidc/service/oidc_auth_service"
+local logger = require("flux_gate/core/utils/logger")
 
 local function generateAuthorizationUri()
     local redirectUri = oidcAuthService.generateAuthorizationUri()
@@ -11,10 +12,11 @@ end
 
 local function authorize()
     ngx.header.content_type = "application/json; charset=utf-8"
-    ngx.req.read_body()
-    local post_args = ngx.req.get_post_args()
+    local post_args = ngx.req.get_uri_args()
     local state = post_args["state"]
     local code = post_args["code"]
+    logger.debug("state: "..state)
+    logger.debug("code: "..code)
     local userTokenState = oidcAuthService.authorize(state, code)
     if userTokenState then
         ngx.status = ngx.HTTP_OK

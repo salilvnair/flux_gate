@@ -1,6 +1,6 @@
 local FluxGateConfigLog = {
     __metadata = {
-        table = "fluxgate_config_log",
+        table = "fluxgate_soap_config_log",
         id = "id",
         columns = {
             id = { column = "id", id = true },

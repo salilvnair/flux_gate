@@ -3,10 +3,6 @@ local logger = require "flux_gate/core/utils/logger"
 local httpUtils = require("flux_gate/core/utils/http_utils")
 
 function soapClientUtils.invokeSoapApi(apiUrl)
-
-    -- Read the incoming SOAP request body
-    ngx.req.read_body()
-
    
     local request_body = ngx.req.get_body_data()
 

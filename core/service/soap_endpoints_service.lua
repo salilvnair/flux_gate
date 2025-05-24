@@ -5,6 +5,8 @@ local soapApiUtils = require("flux_gate/core/utils/soap_api_utils")
 local gate = require("flux_gate/core/gate")
 
 function soapEndpointsService.register()
+    -- Read the incoming SOAP request body
+    ngx.req.read_body()
     local gateData = gate.resolve(ngx)
 
     if not gateData then

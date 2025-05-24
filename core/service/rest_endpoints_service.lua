@@ -5,6 +5,8 @@ local restApiUtils = require("flux_gate/core/utils/rest_api_utils")
 local gate = require("flux_gate/core/gate")
 
 function restEndPointsService.register()
+    -- Read the incoming Rest request body
+    ngx.req.read_body()
     local gateData = gate.resolve(ngx)
 
     if not gateData then

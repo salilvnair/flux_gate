@@ -8,7 +8,7 @@ local logger = require("flux_gate/core/utils/logger")
 function oidcAuthService.generateAuthorizationUri()
     local clientId, redirectUri, stateMetadata, codeChallenge = props.clientId, props.redirectUri, props.stateMetadata, props.codeChallenge
     local authUri = props.authUri
-    local uri = authUri .. "?client_id=" .. clientId .. "&redirect_uri=" .. redirectUri
+    local uri = authUri .. "&client_id=" .. clientId .. "&redirect_uri=" .. redirectUri
     if stateMetadata then
         uri = uri .. "&state=" .. stateMetadata
     end
@@ -21,8 +21,7 @@ end
 
 
 function oidcAuthService.authorize(state, code)
-    local redirectUri = oidcAuthService.generateAuthorizationUri()
-    local oidcTokenResponse = oidcAuthTokenService.execute(state, code, redirectUri)
+    local oidcTokenResponse = oidcAuthTokenService.execute(state, code, props.redirectUri)
     if not oidcTokenResponse then
         logger.debug("Failed to get token response")
         return nil
