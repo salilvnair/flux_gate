@@ -42,7 +42,7 @@ function oidcAuthService.authorize(state, code)
                 expiresIn = oidcTokenResponse.expires_in,
                 userInfo = userInfo
             }
-            return userTokenState.generate(userTokenStateData.validToken, userInfo.error, userInfo.idToken, userInfo.expiresIn, userInfo)
+            return userTokenState.generate(userTokenStateData.validToken, userTokenStateData.error, userTokenStateData.idToken, userTokenStateData.expiresIn, userInfo)
         else
             logger.debug("User is not active")
             return userTokenState.generate(false, "user not active", nil, nil, nil)

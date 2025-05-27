@@ -10,10 +10,15 @@ local HTTP_METHOD = {
     DELETE = "DELETE",
 }
 
-
-local function exchange(url, method, headers, body, ssl_verify)
+local function exchange(url, method, headers, body, ssl_verify, proxy_host, proxy_port)
 
     local httpc = http.new()
+
+    if proxy_host and proxy_port then
+        httpc:set_proxy_options({
+            http_proxy = "http://" .. proxy_host .. ":" .. proxy_port
+        })
+    end
 
     if not url then
         logger.error("URL is nil")
@@ -44,7 +49,7 @@ local function exchange(url, method, headers, body, ssl_verify)
 
     local resolvedUrl = scheme .. "://" .. ip .. ":" .. (parsed.port or (scheme == "https" and 443 or 80)) .. path
 
-    logger.debug("Resolved URL: " .. resolvedUrl .. "Host: "..host)
+    logger.debug("Resolved URL: " .. resolvedUrl .. " | Host: "..host)
 
     headers["Host"] = host
     headers["host"] = host

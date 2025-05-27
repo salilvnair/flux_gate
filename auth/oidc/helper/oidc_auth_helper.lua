@@ -1,8 +1,9 @@
 local cjson = require "cjson.safe"
-local http = require "resty.http"
 local jwt = require "resty.jwt"
 local resty_rsa = require "resty.rsa"
 local cache = ngx.shared.jwk_cache
+local logger = require("flux_gate/core/utils/logger")
+local httpUtils = require("flux_gate/core/utils/http_utils")
 
 local oidcAuthHelper = {}
 
@@ -19,20 +20,18 @@ end
 -- Helper: fetch and cache JWKs
 local function get_cached_jwks(url, proxy_host, proxy_port)
     local jwks_cached = cache:get(url)
+    if jwks_cached and type(jwks_cached) == "string" and #jwks_cached > 0 then
+        logger.debug("Using cached JWKs for URL: " .. url)
+    else
+        logger.debug("No cached JWKs found for URL: " .. url)
+    end
     if jwks_cached then return cjson.decode(jwks_cached) end
 
-    local httpc = http.new()
+    logger.debug("Fetching JWKs from URL: " .. url)
 
-    if proxy_host and proxy_port then
-        httpc:set_proxy_options({
-            http_proxy = "http://" .. proxy_host .. ":" .. proxy_port
-        })
-    end
-
-    local res, err = httpc:request_uri(url, {
-        method = "GET",
-        ssl_verify = false -- disable only in dev
-    })
+    local res, err = httpUtils.exchange(url, httpUtils.HTTP_METHOD.GET, {}, nil, false, proxy_host, proxy_port)
+    
+    logger.debug("JWKs fetch response: " .. tostring(res))
 
     if not res or res.status ~= 200 then
         return nil, "INVALID_URL"
@@ -65,11 +64,15 @@ function oidcAuthHelper.validate_id_token(auth_config, id_token)
     local payload = base64url_decode(parts[2])
     if not header or not payload then return false end
 
+    logger.debug("Decoded header: " .. header)
+    logger.debug("Decoded payload: " .. payload)
+
     local header_json = cjson.decode(header)
     local payload_json = cjson.decode(payload)
     if not header_json or not payload_json then return false end
 
     local jwks, err = get_cached_jwks(auth_config.jks_site_url, auth_config.proxy_host, auth_config.proxy_port)
+    logger.debug("JWKs fetched: " .. cjson.encode(jwks))
     if not jwks or not jwks.keys then return false end
 
     local found = false
@@ -114,6 +117,7 @@ function oidcAuthHelper.verify_token_signature(auth_config, id_token)
     end
 
     local jwks, err = get_cached_jwks(auth_config.jks_site_url, auth_config.proxy_host, auth_config.proxy_port)
+    logger.debug("JWKs fetched: " .. cjson.encode(jwks))
     if not jwks then
         verificationErrorBuilder.type = "INVALID_URL"
         verificationErrorBuilder.errorId = "300b.01"

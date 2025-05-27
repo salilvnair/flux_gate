@@ -30,9 +30,9 @@ end
 local method = ngx.req.get_method()
 if method == "GET" then
     local uri = ngx.var.uri
-    if uri == "/auth/redirect" then
+    if uri == "/api/auth/redirect" then
         generateAuthorizationUri()
-    elseif uri == "/auth/authorize" then
+    elseif uri == "/api/auth/authorize" then
         authorize()
     else
         ngx.status = 404
