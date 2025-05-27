@@ -61,22 +61,20 @@ reboot_openresty() {
 }
 
 start_flux_gate() {
-  # flux_gate_init_conf
+  flux_gate_init_conf
 
-  # if pgrep -x "openresty" > /dev/null; then
-  #   echo "OpenResty is running"
-  #   flux_gate_init_apis
-  #   reboot_openresty
-  #   echo "FluxGate is up and running"
-  # else
-  #   echo "OpenResty is not running"
-  #   openresty
-  #   flux_gate_init_apis
-  #   reboot_openresty
-  #   echo "FluxGate is up and running"
-  # fi
-  local creds=$(basic_auth_from_props)
-  echo "Starting FluxGate with credentials: $creds"
+  if pgrep -x "openresty" > /dev/null; then
+    echo "OpenResty is running"
+    flux_gate_init_apis
+    reboot_openresty
+    echo "FluxGate is up and running"
+  else
+    echo "OpenResty is not running"
+    openresty
+    flux_gate_init_apis
+    reboot_openresty
+    echo "FluxGate is up and running"
+  fi
 }
 
 start_flux_gate
