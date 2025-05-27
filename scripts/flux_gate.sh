@@ -37,13 +37,21 @@ extract_server_name() {
   echo $server_name
 }
 
+basic_auth_from_props() {
+  AUTH_PROPS_LUA_FILE="/usr/local/openresty/lualib/flux_gate/auth/settings/props.lua"
+  local username=$(grep 'username' "$AUTH_PROPS_LUA_FILE" | sed -E 's/.*username *= *"([^"]+)".*/\1/')
+  local password=$(grep 'password' "$AUTH_PROPS_LUA_FILE" | sed -E 's/.*password *= *"([^"]+)".*/\1/')
+  echo "$username:$password"
+}
+
 
 flux_gate_init_apis() {
   # Perform curl requests
   local server_name=$(extract_server_name)
-  curl -k "https://$server_name/nginx/updateNameResolver"
-  curl -k "https://$server_name/nginx/updateUpstream"
-  curl -k "https://$server_name/saveConfigFile"
+  local creds=$(basic_auth_from_props)
+  curl -k -u "$creds" "https://$server_name/api/admin/nginx/updateNameResolver"
+  curl -k -u "$creds" "https://$server_name/api/admin/nginx/updateUpstream"
+  curl -k -u "$creds" "https://$server_name/api/admin/saveConfigFile"
 }
 
 reboot_openresty() {
@@ -53,20 +61,22 @@ reboot_openresty() {
 }
 
 start_flux_gate() {
-  flux_gate_init_conf
+  # flux_gate_init_conf
 
-  if pgrep -x "openresty" > /dev/null; then
-    echo "OpenResty is running"
-    flux_gate_init_apis
-    reboot_openresty
-    echo "FluxGate is up and running"
-  else
-    echo "OpenResty is not running"
-    openresty
-    flux_gate_init_apis
-    reboot_openresty
-    echo "FluxGate is up and running"
-  fi
+  # if pgrep -x "openresty" > /dev/null; then
+  #   echo "OpenResty is running"
+  #   flux_gate_init_apis
+  #   reboot_openresty
+  #   echo "FluxGate is up and running"
+  # else
+  #   echo "OpenResty is not running"
+  #   openresty
+  #   flux_gate_init_apis
+  #   reboot_openresty
+  #   echo "FluxGate is up and running"
+  # fi
+  local creds=$(basic_auth_from_props)
+  echo "Starting FluxGate with credentials: $creds"
 }
 
 start_flux_gate

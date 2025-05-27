@@ -1,7 +1,7 @@
 local oidcAuthHelper = require("flux_gate/auth/oidc/helper/oidc_auth_helper")
 local logger = require("flux_gate/core/utils/logger")
 local props = require("flux_gate/auth/settings/props")
-local webSecurityConfig ={}
+local oidcSecurityConfig ={}
 
 local function httpUnauthorized()
     ngx.status = ngx.HTTP_UNAUTHORIZED
@@ -21,7 +21,7 @@ local function httpForbidden()
     return ngx.exit(ngx.HTTP_FORBIDDEN)
 end
 
-function webSecurityConfig.config()
+function oidcSecurityConfig.config()
     local auth_config = {
         client_id = props.clientId,
         host_name =props.hostName,
@@ -59,7 +59,7 @@ function webSecurityConfig.config()
     ngx.ctx.id_token = token
 end
 
-return webSecurityConfig;
+return oidcSecurityConfig;
 
 
 

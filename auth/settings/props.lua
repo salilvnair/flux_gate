@@ -10,6 +10,10 @@ local props = {
     codeChallenge = "94cj1234",
     hostName = "http://localhost:31333",
     jksSiteUrl = "http://localhost:31333/jwks",
+    appBasicAuth = {
+        username = "flux_gate",
+        password = "Apple2019@"
+    }
 
 }
 return props
