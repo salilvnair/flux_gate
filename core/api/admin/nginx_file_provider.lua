@@ -18,9 +18,9 @@ end
 local method = ngx.req.get_method()
 if method == "GET" then
     local uri = ngx.var.uri
-    if uri == "/nginx/updateUpstream" then
+    if uri == "/api/admin/nginx/updateUpstream" then
         updateUpstreams()
-    elseif uri == "/nginx/updateNameResolver" then
+    elseif uri == "/api/admin/nginx/updateNameResolver" then
         updateNameResolver()
     else
         ngx.status = 404
