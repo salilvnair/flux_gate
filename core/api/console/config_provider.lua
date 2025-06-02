@@ -14,6 +14,13 @@ local function save_config()
     ngx.req.read_body()
     local body = ngx.req.get_body_data()
     if not body then
+        local file = io.open(ngx.req.get_body_file(), "r")
+        if file then
+          body = file:read("*a")
+          file:close()
+        end
+    end
+    if not body then
         ngx.status = ngx.HTTP_BAD_REQUEST
         ngx.say(json.encode({ error = "Missing request body" }))
         return
